@@ -1,0 +1,12 @@
+﻿namespace TaskFlow.Domain.Users
+{
+    public interface IUserRepository
+    {
+        Task Add(User user);
+        Task<User?> GetById(Guid id);
+        Task<User?> GetByEmail(string email);
+        Task Update(User user);
+        Task Delete(User user);
+        Task<List<User>> GetAll();
+    }
+}

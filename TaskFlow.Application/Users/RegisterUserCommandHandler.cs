@@ -10,15 +10,19 @@ namespace TaskFlow.Application.Users
 {
     public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand>
     {
-        public Task Handle(RegisterUserCommand command)
+        private readonly IUserRepository _userRepository;
+
+        public RegisterUserCommandHandler(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+        public async Task Handle(RegisterUserCommand command)
         {
             var email = new Email(command.Email);
 
             var user = new User(command.Name, email);
 
-            Console.WriteLine($"User created: {user.Id}");
-
-            return Task.CompletedTask;
+            await _userRepository.Add(user);
         }
     }
 }
