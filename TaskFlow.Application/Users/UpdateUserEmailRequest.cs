@@ -6,9 +6,5 @@ using System.Threading.Tasks;
 
 namespace TaskFlow.Application.Users
 {
-    public class RegisterUserCommand
-    {
-        public string Name { get; set; }
-        public string Email { get; set; }
-    }
+    public record UpdateUserEmailRequest(string Email);
 }

@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaskFlow.Application.Users;
+using TaskFlow.Application.Users.Commands;
 using TaskFlow.Application.Users.Handlers;
 using TaskFlow.Application.Users.Queries.GetUserById;
 using TaskFlow.Application.Users.Queries.GetUsers;
-using TaskFlow.Domain.Users;
 using TaskFlow.Domain.Users.Commands;
 
 namespace TaskFlow.API.Controllers
@@ -14,12 +15,15 @@ namespace TaskFlow.API.Controllers
         private readonly RegisterUserCommandHandler _registerUserCommandHandler;
         private readonly GetUsersQueryHandler _getUsersHandler;
         private readonly GetUserByIdQueryHandler _getUserByIdHandler;
-
-        public UsersController(RegisterUserCommandHandler registerUserCommandHandler, GetUsersQueryHandler getUsersQueryHandler, GetUserByIdQueryHandler getUserByIdQueryHandler)
+        private readonly UpdateUserEmailCommandHandler _updateUserEmailCommandHandler;
+        public UsersController(RegisterUserCommandHandler registerUserCommandHandler, GetUsersQueryHandler getUsersQueryHandler, 
+            GetUserByIdQueryHandler getUserByIdQueryHandler, UpdateUserEmailCommandHandler updateUserEmailCommandHandler)
         {
             _registerUserCommandHandler = registerUserCommandHandler;
             _getUsersHandler = getUsersQueryHandler;
             _getUserByIdHandler = getUserByIdQueryHandler;
+            _updateUserEmailCommandHandler = updateUserEmailCommandHandler;
+            _updateUserEmailCommandHandler = updateUserEmailCommandHandler;
         }
 
         [HttpPost]
@@ -59,6 +63,29 @@ namespace TaskFlow.API.Controllers
                 return NotFound(new { message = "User not found." });
 
             return Ok(user);
+        }
+
+        [HttpPut("{id:guid}/email")]
+        public async Task<IActionResult> UpdateEmail(Guid id, [FromBody] UpdateUserEmailRequest request)
+        {
+            try
+            {
+                var command = new UpdateUserEmailCommand(id, request.Email);
+                var user = await _updateUserEmailCommandHandler.Handle(command);
+
+                if (user == null)
+                    return NotFound(new { message = "User not found." });
+
+                return Ok(new { user.Id, user.Name, Email = user.Email.Value });
+            }
+            catch(InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }

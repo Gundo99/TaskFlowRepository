@@ -20,6 +20,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<RegisterUserCommandHandler>();
 builder.Services.AddScoped<GetUsersQueryHandler>();
 builder.Services.AddScoped<GetUserByIdQueryHandler>();
+builder.Services.AddScoped<UpdateUserEmailCommandHandler>();
 
 var app = builder.Build();
 
