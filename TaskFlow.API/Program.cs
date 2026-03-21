@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.Users.Handlers;
+using TaskFlow.Application.Users.Queries.GetUserById;
 using TaskFlow.Application.Users.Queries.GetUsers;
 using TaskFlow.Domain.Users;
 using TaskFlow.Infrastructure.Persistence;
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<RegisterUserCommandHandler>();
 builder.Services.AddScoped<GetUsersQueryHandler>();
+builder.Services.AddScoped<GetUserByIdQueryHandler>();
 
 var app = builder.Build();
 
