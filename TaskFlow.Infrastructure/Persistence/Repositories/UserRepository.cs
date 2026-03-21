@@ -33,7 +33,7 @@ namespace TaskFlow.Infrastructure.Persistence.Repositories
             return await _dbContext.Users.ToListAsync();
         }
 
-        public async Task<List<User>> GetPaged(int pageNumber, int pageSize, string? search)
+        public async Task<List<User>> GetPaged(int pageNumber, int pageSize, string? search, string? sortBy, string? sortDirection)
         {
             var query = _dbContext.Users.AsQueryable();
 
@@ -45,9 +45,20 @@ namespace TaskFlow.Infrastructure.Persistence.Repositories
                     x.Email.Value.ToLower().Contains(searchTerm));
             }
 
+            var sortField = sortBy?.Trim().ToLower();
+            var direction = sortDirection?.Trim().ToLower();
+
+            query = (sortField, direction) switch
+            {
+                ("email", "desc") => query.OrderByDescending(x => x.Email.Value),
+                ("email",_) => query.OrderBy(x => x.Email.Value),
+                ("name", "desc") => query.OrderByDescending(x => x.Name),
+                ("name", _) => query.OrderBy(x => x.Name),
+                _ => query.OrderBy(x => x.Name)
+            };
+
             return await query
-                .OrderBy(x => x.Name)
-                .Skip((pageNumber - 1) * pageSize)
+                .Skip((pageNumber -1)* pageSize)
                 .Take(pageSize)
                 .ToListAsync();
         }

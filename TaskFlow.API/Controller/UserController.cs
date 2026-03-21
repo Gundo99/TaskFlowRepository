@@ -43,13 +43,17 @@ namespace TaskFlow.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int pageNumber =1, [FromQuery] int pageSize = 10, [FromQuery] string? search = null)
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber =1, 
+            [FromQuery] int pageSize = 10, [FromQuery] string? search = null,
+            [FromQuery] string? sortBy = "name", [FromQuery] string? sortDirection = "asc")
         {
             var query = new GetUsersQuery
             {
                 PageNumber = pageNumber,
                 PageSize = pageSize,
-                Search = search
+                Search = search,
+                SortBy = sortBy,
+                SortDirection = sortDirection
             };
 
             var result = await _getUsersHandler.Handle(query);

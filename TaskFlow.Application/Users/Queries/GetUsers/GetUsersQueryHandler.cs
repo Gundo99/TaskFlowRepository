@@ -26,7 +26,17 @@ namespace TaskFlow.Application.Users.Queries.GetUsers
             if (getUsersQuery.PageSize < 1 || getUsersQuery.PageSize > 100)
                 throw new ArgumentException("Page size must be between 1 and 100.", nameof(getUsersQuery.PageSize));
 
-            var users = await _userRepository.GetPaged(getUsersQuery.PageNumber, getUsersQuery.PageSize, getUsersQuery.Search);
+            var allowedSortFields = new [] { "name", "email" };
+            var sortBy = getUsersQuery.SortBy?.Trim().ToLower() ?? "name";
+            var sortDirection = getUsersQuery.SortDirection?.Trim().ToLower() ?? "asc";
+
+            if (!allowedSortFields.Contains(sortBy))
+                throw new ArgumentException("SortBy must be either 'name' or 'email'.");
+
+            if (sortDirection != "asc" && sortDirection != "desc")
+                throw new ArgumentException("SortDirection must be either 'asc' or 'desc'.");
+
+            var users = await _userRepository.GetPaged(getUsersQuery.PageNumber, getUsersQuery.PageSize, getUsersQuery.Search, sortBy, sortDirection);
             var totalCount = await _userRepository.Count(getUsersQuery.Search);
 
             var items = users
