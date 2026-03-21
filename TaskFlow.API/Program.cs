@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TaskFlow.API.Middleware;
 using TaskFlow.Application.Users.Handlers;
 using TaskFlow.Application.Users.Queries.GetUserById;
 using TaskFlow.Application.Users.Queries.GetUsers;
@@ -21,8 +22,11 @@ builder.Services.AddScoped<RegisterUserCommandHandler>();
 builder.Services.AddScoped<GetUsersQueryHandler>();
 builder.Services.AddScoped<GetUserByIdQueryHandler>();
 builder.Services.AddScoped<UpdateUserEmailCommandHandler>();
+builder.Services.AddScoped<DeleteUserCommandHandler>();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

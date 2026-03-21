@@ -8,5 +8,8 @@
         Task Update(User user);
         Task Delete(User user);
         Task<List<User>> GetAll();
+
+        Task<List<User>> GetPaged(int pageNumber, int pageSize, string? search);
+        Task<int> Count(string? search);
     }
 }

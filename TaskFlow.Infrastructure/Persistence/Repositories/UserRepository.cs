@@ -33,6 +33,40 @@ namespace TaskFlow.Infrastructure.Persistence.Repositories
             return await _dbContext.Users.ToListAsync();
         }
 
+        public async Task<List<User>> GetPaged(int pageNumber, int pageSize, string? search)
+        {
+            var query = _dbContext.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchTerm = search.Trim().ToLower();
+                query = query.Where(x =>
+                    x.Name.ToLower().Contains(searchTerm) ||
+                    x.Email.Value.ToLower().Contains(searchTerm));
+            }
+
+            return await query
+                .OrderBy(x => x.Name)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<int> Count(string? search)
+        {
+            var query = _dbContext.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchTerm = search.Trim().ToLower();
+
+                query = query.Where(x =>
+                    x.Name.ToLower().Contains(searchTerm) ||
+                    x.Email.Value.ToLower().Contains(searchTerm));
+            }
+            return await query.CountAsync();
+        }
+
         public async Task Update(User user)
         {
             _dbContext.Users.Update(user);
