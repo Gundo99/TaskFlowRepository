@@ -3,6 +3,7 @@ using TaskFlow.API.Middleware;
 using TaskFlow.Application.Users.Handlers;
 using TaskFlow.Application.Users.Queries.GetUserById;
 using TaskFlow.Application.Users.Queries.GetUsers;
+using TaskFlow.Domain.Tasks;
 using TaskFlow.Domain.Users;
 using TaskFlow.Infrastructure.Persistence;
 using TaskFlow.Infrastructure.Persistence.Repositories;
@@ -23,6 +24,7 @@ builder.Services.AddScoped<GetUsersQueryHandler>();
 builder.Services.AddScoped<GetUserByIdQueryHandler>();
 builder.Services.AddScoped<UpdateUserEmailCommandHandler>();
 builder.Services.AddScoped<DeleteUserCommandHandler>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
 var app = builder.Build();
 
