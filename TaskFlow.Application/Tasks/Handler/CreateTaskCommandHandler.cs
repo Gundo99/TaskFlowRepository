@@ -27,13 +27,7 @@ namespace TaskFlow.Application.Tasks.Commands.CreateTask
 
             await _taskRepository.Add(taskItem);
 
-            return new TaskResponse(
-                taskItem.Id,
-                taskItem.Title,
-                taskItem.Description,
-                taskItem.IsCompleted,
-                taskItem.CreatedAt,
-                taskItem.UserId);
+            return taskItem.ToTaskResponse();
         }
     }
 }

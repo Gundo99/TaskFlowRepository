@@ -22,14 +22,7 @@ namespace TaskFlow.Application.Tasks.Commands.UpdateTask
 
             await _taskRepository.Update(taskItem);
 
-            return new TaskResponse(
-                taskItem.Id,
-                taskItem.Title,
-                taskItem.Description,
-                taskItem.IsCompleted,
-                taskItem.CreatedAt,
-                taskItem.UserId
-                );
+            return taskItem.ToTaskResponse();
         }
     }
 }

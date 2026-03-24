@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskFlow.Application.Tasks;
 using TaskFlow.Domain.Tasks;
 using TaskFlow.Domain.Users;
 
@@ -30,13 +31,7 @@ namespace TaskFlow.Application.Users.Queries.GetTasksByUserId
 
             var tasks = await _taskRepository.GetByUserId(getTasksByUserIdQuery.UserId);
 
-            return tasks.Select(task => new TaskFlow.Application.Tasks.TaskResponse(
-                task.Id,
-                task.Title,
-                task.Description,
-                task.IsCompleted,
-                task.CreatedAt,
-                task.UserId)).ToList();
+            return tasks.Select(t => t.ToTaskResponse()).ToList();
         }
     }
 }
