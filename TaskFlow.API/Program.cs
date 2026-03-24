@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.API.Middleware;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
+using TaskFlow.Application.Tasks.Commands.UpdateTask;
 using TaskFlow.Application.Users.Handlers;
 using TaskFlow.Application.Users.Queries.GetTasksByUserId;
 using TaskFlow.Application.Users.Queries.GetUserById;
@@ -30,6 +31,7 @@ builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<CreateTaskCommandHandler>();
 builder.Services.AddScoped<GetTasksByUserIdQueryHandler>();
 builder.Services.AddScoped<CompleteTaskCommdandHandler>();
+builder.Services.AddScoped<UpdateTaskCommandHandler>();
 
 var app = builder.Build();
 

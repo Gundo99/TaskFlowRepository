@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaskFlow.API.Contracts;
 using TaskFlow.API.Contracts.Tasks;
 using TaskFlow.Application.Tasks.Commands;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
+using TaskFlow.Application.Tasks.Commands.UpdateTask;
 using TaskFlow.Application.Users.Commands;
 using TaskFlow.Application.Users.Handlers;
 using TaskFlow.Application.Users.Queries.GetTasksByUserId;
@@ -15,13 +17,15 @@ namespace TaskFlow.API.Controllers
         private readonly CreateTaskCommandHandler _createTaskHandler;
         private readonly GetTasksByUserIdQueryHandler _getTasksByUserIdQueryHandler;
         private readonly CompleteTaskCommdandHandler _completeTaskCommandHandler;
+        private readonly UpdateTaskCommandHandler _updateTaskCommandHandler;
 
         public TasksController(CreateTaskCommandHandler createTaskHandler, GetTasksByUserIdQueryHandler getTasksByUserIdQuery
-            , CompleteTaskCommdandHandler completeTaskCommdandHandler)
+            , CompleteTaskCommdandHandler completeTaskCommdandHandler, UpdateTaskCommandHandler updateTaskCommandHandler)
         {
             _createTaskHandler = createTaskHandler;
             _getTasksByUserIdQueryHandler = getTasksByUserIdQuery;
             _completeTaskCommandHandler = completeTaskCommdandHandler;
+            _updateTaskCommandHandler = updateTaskCommandHandler;
         }
 
         [HttpPost]
@@ -47,6 +51,14 @@ namespace TaskFlow.API.Controllers
             var command = new CompleteTaskCommand(taskId);
             await _completeTaskCommandHandler.Handle(command);
             return NoContent();
+        }
+
+        [HttpPut("/api/tasks/{taskId:guid}")]
+        public async Task<IActionResult> UpdateTask(Guid taskId, [FromBody] UpdateTaskRequest request)
+        {
+            var command = new UpdateTaskCommand(taskId, request.Title, request.Description);
+            var updatedTask = await _updateTaskCommandHandler.Handle(command);
+            return Ok(updatedTask);
         }
     }
 }
