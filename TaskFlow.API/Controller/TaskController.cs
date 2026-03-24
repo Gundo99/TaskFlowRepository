@@ -2,6 +2,8 @@
 using TaskFlow.API.Contracts.Tasks;
 using TaskFlow.Application.Tasks.Commands;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
+using TaskFlow.Application.Users.Commands;
+using TaskFlow.Application.Users.Handlers;
 using TaskFlow.Application.Users.Queries.GetTasksByUserId;
 
 namespace TaskFlow.API.Controllers
@@ -12,11 +14,14 @@ namespace TaskFlow.API.Controllers
     {
         private readonly CreateTaskCommandHandler _createTaskHandler;
         private readonly GetTasksByUserIdQueryHandler _getTasksByUserIdQueryHandler;
+        private readonly CompleteTaskCommdandHandler _completeTaskCommandHandler;
 
-        public TasksController(CreateTaskCommandHandler createTaskHandler, GetTasksByUserIdQueryHandler getTasksByUserIdQuery)
+        public TasksController(CreateTaskCommandHandler createTaskHandler, GetTasksByUserIdQueryHandler getTasksByUserIdQuery
+            , CompleteTaskCommdandHandler completeTaskCommdandHandler)
         {
             _createTaskHandler = createTaskHandler;
             _getTasksByUserIdQueryHandler = getTasksByUserIdQuery;
+            _completeTaskCommandHandler = completeTaskCommdandHandler;
         }
 
         [HttpPost]
@@ -34,6 +39,14 @@ namespace TaskFlow.API.Controllers
             var query = new GetTaskByUserIdQuery(userId);
             var tasks = await _getTasksByUserIdQueryHandler.Handle(query);
             return Ok(tasks);
+        }
+
+        [HttpPatch("/api/tasks/{taskId:guid}/complete")]
+        public async Task<IActionResult> CompleteTask(Guid taskId)
+        {
+            var command = new CompleteTaskCommand(taskId);
+            await _completeTaskCommandHandler.Handle(command);
+            return NoContent();
         }
     }
 }

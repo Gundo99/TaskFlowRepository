@@ -29,6 +29,7 @@ builder.Services.AddScoped<DeleteUserCommandHandler>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<CreateTaskCommandHandler>();
 builder.Services.AddScoped<GetTasksByUserIdQueryHandler>();
+builder.Services.AddScoped<CompleteTaskCommdandHandler>();
 
 var app = builder.Build();
 

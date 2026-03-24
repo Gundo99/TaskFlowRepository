@@ -40,6 +40,9 @@ namespace TaskFlow.Domain.Tasks
 
         public void MarkAsCompleted()
         {
+            if (IsCompleted == true)
+                throw new InvalidOperationException("Task is already completed.");
+
             IsCompleted = true;
         }
 
