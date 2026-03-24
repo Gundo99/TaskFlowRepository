@@ -4,6 +4,7 @@ using TaskFlow.API.Contracts.Tasks;
 using TaskFlow.Application.Tasks.Commands;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
 using TaskFlow.Application.Tasks.Commands.UpdateTask;
+using TaskFlow.Application.Tasks.Handler;
 using TaskFlow.Application.Users.Commands;
 using TaskFlow.Application.Users.Handlers;
 using TaskFlow.Application.Users.Queries.GetTasksByUserId;
@@ -18,14 +19,17 @@ namespace TaskFlow.API.Controllers
         private readonly GetTasksByUserIdQueryHandler _getTasksByUserIdQueryHandler;
         private readonly CompleteTaskCommdandHandler _completeTaskCommandHandler;
         private readonly UpdateTaskCommandHandler _updateTaskCommandHandler;
+        private readonly DeleteTaskCommandHandler _deleteTaskHandler;
 
         public TasksController(CreateTaskCommandHandler createTaskHandler, GetTasksByUserIdQueryHandler getTasksByUserIdQuery
-            , CompleteTaskCommdandHandler completeTaskCommdandHandler, UpdateTaskCommandHandler updateTaskCommandHandler)
+            , CompleteTaskCommdandHandler completeTaskCommdandHandler, UpdateTaskCommandHandler updateTaskCommandHandler,
+           DeleteTaskCommandHandler deleteTaskHandler)
         {
             _createTaskHandler = createTaskHandler;
             _getTasksByUserIdQueryHandler = getTasksByUserIdQuery;
             _completeTaskCommandHandler = completeTaskCommdandHandler;
             _updateTaskCommandHandler = updateTaskCommandHandler;
+            _deleteTaskHandler = deleteTaskHandler;
         }
 
         [HttpPost]
@@ -59,6 +63,15 @@ namespace TaskFlow.API.Controllers
             var command = new UpdateTaskCommand(taskId, request.Title, request.Description);
             var updatedTask = await _updateTaskCommandHandler.Handle(command);
             return Ok(updatedTask);
+        }
+
+        [HttpDelete("/api/tasks/{taskId:guid}")]
+        public async Task<IActionResult> Delete(Guid taskId)
+        {
+            var command = new DeleteTaskCommand(taskId);
+            await _deleteTaskHandler.Handle(command);
+
+            return NoContent();
         }
     }
 }
