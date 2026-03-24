@@ -2,6 +2,7 @@
 using TaskFlow.API.Contracts.Tasks;
 using TaskFlow.Application.Tasks.Commands;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
+using TaskFlow.Application.Users.Queries.GetTasksByUserId;
 
 namespace TaskFlow.API.Controllers
 {
@@ -10,10 +11,12 @@ namespace TaskFlow.API.Controllers
     public class TasksController : ControllerBase
     {
         private readonly CreateTaskCommandHandler _createTaskHandler;
+        private readonly GetTasksByUserIdQueryHandler _getTasksByUserIdQueryHandler;
 
-        public TasksController(CreateTaskCommandHandler createTaskHandler)
+        public TasksController(CreateTaskCommandHandler createTaskHandler, GetTasksByUserIdQueryHandler getTasksByUserIdQuery)
         {
             _createTaskHandler = createTaskHandler;
+            _getTasksByUserIdQueryHandler = getTasksByUserIdQuery;
         }
 
         [HttpPost]
@@ -23,6 +26,14 @@ namespace TaskFlow.API.Controllers
             var task = await _createTaskHandler.Handle(command);
 
             return Ok(task);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTasksByUserId(Guid userId)
+        {
+            var query = new GetTaskByUserIdQuery(userId);
+            var tasks = await _getTasksByUserIdQueryHandler.Handle(query);
+            return Ok(tasks);
         }
     }
 }
