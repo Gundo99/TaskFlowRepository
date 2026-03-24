@@ -5,6 +5,7 @@ using TaskFlow.Application.Tasks.Commands;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
 using TaskFlow.Application.Tasks.Commands.UpdateTask;
 using TaskFlow.Application.Tasks.Handler;
+using TaskFlow.Application.Tasks.Queries;
 using TaskFlow.Application.Users.Commands;
 using TaskFlow.Application.Users.Handlers;
 using TaskFlow.Application.Users.Queries.GetTasksByUserId;
@@ -20,16 +21,18 @@ namespace TaskFlow.API.Controllers
         private readonly CompleteTaskCommdandHandler _completeTaskCommandHandler;
         private readonly UpdateTaskCommandHandler _updateTaskCommandHandler;
         private readonly DeleteTaskCommandHandler _deleteTaskHandler;
+        private readonly GetTaskByIdQueryHandler _getTaskByIdHandler;
 
         public TasksController(CreateTaskCommandHandler createTaskHandler, GetTasksByUserIdQueryHandler getTasksByUserIdQuery
             , CompleteTaskCommdandHandler completeTaskCommdandHandler, UpdateTaskCommandHandler updateTaskCommandHandler,
-           DeleteTaskCommandHandler deleteTaskHandler)
+           DeleteTaskCommandHandler deleteTaskHandler, GetTaskByIdQueryHandler getTaskByIdQueryHandler)
         {
             _createTaskHandler = createTaskHandler;
             _getTasksByUserIdQueryHandler = getTasksByUserIdQuery;
             _completeTaskCommandHandler = completeTaskCommdandHandler;
             _updateTaskCommandHandler = updateTaskCommandHandler;
             _deleteTaskHandler = deleteTaskHandler;
+            _getTaskByIdHandler = getTaskByIdQueryHandler;
         }
 
         [HttpPost]
@@ -72,6 +75,14 @@ namespace TaskFlow.API.Controllers
             await _deleteTaskHandler.Handle(command);
 
             return NoContent();
+        }
+
+        [HttpGet("/api/tasks/{taskId:guid}")]
+        public async Task<IActionResult> GetTaskById(Guid taskId)
+        {
+            var query = new GetTaskByIdQuery(taskId);
+            var task = await _getTaskByIdHandler.Handle(query);
+            return Ok(task);
         }
     }
 }

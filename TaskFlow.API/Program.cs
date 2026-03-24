@@ -3,6 +3,7 @@ using TaskFlow.API.Middleware;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
 using TaskFlow.Application.Tasks.Commands.UpdateTask;
 using TaskFlow.Application.Tasks.Handler;
+using TaskFlow.Application.Tasks.Queries;
 using TaskFlow.Application.Users.Handlers;
 using TaskFlow.Application.Users.Queries.GetTasksByUserId;
 using TaskFlow.Application.Users.Queries.GetUserById;
@@ -34,6 +35,7 @@ builder.Services.AddScoped<GetTasksByUserIdQueryHandler>();
 builder.Services.AddScoped<CompleteTaskCommdandHandler>();
 builder.Services.AddScoped<UpdateTaskCommandHandler>();
 builder.Services.AddScoped<DeleteTaskCommandHandler>();
+builder.Services.AddScoped<GetTaskByIdQueryHandler>();
 
 var app = builder.Build();
 
