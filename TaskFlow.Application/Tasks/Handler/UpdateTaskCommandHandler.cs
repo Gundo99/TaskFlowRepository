@@ -1,4 +1,5 @@
-﻿using TaskFlow.Domain.Tasks;
+﻿using TaskFlow.Application.Common.Exceptions;
+using TaskFlow.Domain.Tasks;
 
 namespace TaskFlow.Application.Tasks.Commands.UpdateTask
 {
@@ -16,7 +17,7 @@ namespace TaskFlow.Application.Tasks.Commands.UpdateTask
             var taskItem = await _taskRepository.GetById(command.TaskId);
 
             if (taskItem is null)
-                throw new ArgumentException("Task not found.");
+                throw new NotFoundException("Task not found.");
 
             taskItem.UpdateDetails(command.Title, command.Description);
 

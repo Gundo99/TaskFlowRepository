@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskFlow.Application.Common.Exceptions;
 using TaskFlow.Application.Tasks;
 using TaskFlow.Domain.Tasks;
 using TaskFlow.Domain.Users;
@@ -27,7 +28,7 @@ namespace TaskFlow.Application.Users.Queries.GetTasksByUserId
             var user = await _userRepository.GetById(getTasksByUserIdQuery.UserId);
 
             if (user is null)
-                throw new ArgumentException("User not found.");
+                throw new NotFoundException("User not found.");
 
             var tasks = await _taskRepository.GetByUserId(getTasksByUserIdQuery.UserId);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskFlow.Application.Common.Exceptions;
 using TaskFlow.Domain.Tasks;
 
 namespace TaskFlow.Application.Tasks.Queries
@@ -20,7 +21,7 @@ namespace TaskFlow.Application.Tasks.Queries
         {
             var taskItem = await _taskRepository.GetById(query.TaskId);
             if (taskItem == null)
-                throw new ArgumentException("Task not found");
+                throw new NotFoundException("Task not found.");
             return taskItem.ToTaskResponse();
         }
     }

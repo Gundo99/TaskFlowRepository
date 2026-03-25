@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using TaskFlow.Application.Common.Exceptions;
 
 namespace TaskFlow.API.Middleware
 {
@@ -16,6 +17,10 @@ namespace TaskFlow.API.Middleware
             try
             {
                 await _next(context);
+            }
+            catch(NotFoundException ex)
+            {
+                await WriteErrorResponse(context, StatusCodes.Status404NotFound, ex.Message);
             }
             catch (InvalidOperationException ex)
             {

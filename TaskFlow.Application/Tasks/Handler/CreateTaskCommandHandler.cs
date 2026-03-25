@@ -1,4 +1,5 @@
-﻿using TaskFlow.Domain.Tasks;
+﻿using TaskFlow.Application.Common.Exceptions;
+using TaskFlow.Domain.Tasks;
 using TaskFlow.Domain.Users;
 
 namespace TaskFlow.Application.Tasks.Commands.CreateTask
@@ -21,7 +22,7 @@ namespace TaskFlow.Application.Tasks.Commands.CreateTask
             var user = await _userRepository.GetById(command.UserId);
 
             if (user is null)
-                throw new ArgumentException("User not found.");
+                throw new NotFoundException("User not found.");
 
             var taskItem = new TaskItem(command.Title, command.Description, command.UserId);
 

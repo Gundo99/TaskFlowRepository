@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskFlow.Application.Common.Exceptions;
 using TaskFlow.Application.Tasks.Commands;
 using TaskFlow.Domain.Tasks;
 
@@ -22,7 +23,7 @@ namespace TaskFlow.Application.Tasks.Handler
             var taskItem = await _taskRepository.GetById(command.TaskId);
 
             if (taskItem == null)
-                throw new ArgumentException("Task not found");
+                throw new NotFoundException("Task not found.");
 
             await _taskRepository.Delete(taskItem);
         }
