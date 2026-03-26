@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Domain.Common;
+using TaskFlow.Domain.Tasks.Events;
 
 namespace TaskFlow.Domain.Tasks
 {
@@ -44,6 +45,8 @@ namespace TaskFlow.Domain.Tasks
                 throw new InvalidOperationException("Task is already completed.");
 
             IsCompleted = true;
+
+            AddDomainEvent(new TaskCompletedEvent(Id));
         }
 
         public void MarkAsIncomplete()
