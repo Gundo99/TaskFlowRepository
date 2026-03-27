@@ -41,6 +41,7 @@ builder.Services.AddScoped<DeleteTaskCommandHandler>();
 builder.Services.AddScoped<GetTaskByIdQueryHandler>();
 builder.Services.AddScoped<TaskFlow.Infrastructure.Persistence.DomainEventDispatcher>();
 builder.Services.AddScoped<IDomainEventHandler<TaskCompletedEvent>, TaskCompletedEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<TaskCompletedEvent>, TaskCompletedNotificationHandler>();
 
 var app = builder.Build();
 
