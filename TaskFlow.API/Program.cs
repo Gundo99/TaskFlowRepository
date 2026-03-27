@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.API.Middleware;
+using TaskFlow.Application.Common;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
 using TaskFlow.Application.Tasks.Commands.UpdateTask;
+using TaskFlow.Application.Tasks.EventHandler;
 using TaskFlow.Application.Tasks.Handler;
 using TaskFlow.Application.Tasks.Queries;
 using TaskFlow.Application.Users.Handlers;
@@ -9,6 +11,7 @@ using TaskFlow.Application.Users.Queries.GetTasksByUserId;
 using TaskFlow.Application.Users.Queries.GetUserById;
 using TaskFlow.Application.Users.Queries.GetUsers;
 using TaskFlow.Domain.Tasks;
+using TaskFlow.Domain.Tasks.Events;
 using TaskFlow.Domain.Users;
 using TaskFlow.Infrastructure.Persistence;
 using TaskFlow.Infrastructure.Persistence.Repositories;
@@ -36,6 +39,8 @@ builder.Services.AddScoped<CompleteTaskCommdandHandler>();
 builder.Services.AddScoped<UpdateTaskCommandHandler>();
 builder.Services.AddScoped<DeleteTaskCommandHandler>();
 builder.Services.AddScoped<GetTaskByIdQueryHandler>();
+builder.Services.AddScoped<TaskFlow.Infrastructure.Persistence.DomainEventDispatcher>();
+builder.Services.AddScoped<IDomainEventHandler<TaskCompletedEvent>, TaskCompletedEventHandler>();
 
 var app = builder.Build();
 
