@@ -6,6 +6,7 @@ using TaskFlow.Application.Tasks.Commands.UpdateTask;
 using TaskFlow.Application.Tasks.EventHandler;
 using TaskFlow.Application.Tasks.Handler;
 using TaskFlow.Application.Tasks.Queries;
+using TaskFlow.Application.Users.EventHandlers;
 using TaskFlow.Application.Users.Handlers;
 using TaskFlow.Application.Users.Queries.GetTasksByUserId;
 using TaskFlow.Application.Users.Queries.GetUserById;
@@ -42,6 +43,8 @@ builder.Services.AddScoped<GetTaskByIdQueryHandler>();
 builder.Services.AddScoped<TaskFlow.Infrastructure.Persistence.DomainEventDispatcher>();
 builder.Services.AddScoped<IDomainEventHandler<TaskCompletedEvent>, TaskCompletedEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<TaskCompletedEvent>, TaskCompletedNotificationHandler>();
+builder.Services.AddScoped<IDomainEventHandler<UserRegisteredEvent>, UserRegisteredEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<UserRegisteredEvent>, UserWelcomeNotificationHandler>();
 
 var app = builder.Build();
 

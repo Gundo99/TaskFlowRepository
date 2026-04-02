@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using TaskFlow.Application.Common;
 using TaskFlow.Domain.Users;
 
-namespace TaskFlow.Application.Users
+namespace TaskFlow.Application.Users.EventHandlers
 {
-    public class UserRegisteredEventHandler : IDomainEventHandler<UserRegisteredEvent>
+    public class UserWelcomeNotificationHandler : IDomainEventHandler<UserRegisteredEvent>
     {
         public Task Handle(UserRegisteredEvent domainEvent)
         {
-            Console.WriteLine($"User registered: {domainEvent.UserId}");
+            Console.WriteLine($"[WELCOME] Sending welcome message to user {domainEvent.UserId}");
 
             return Task.CompletedTask;
         }
