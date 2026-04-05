@@ -1,10 +1,11 @@
-﻿using TaskFlow.Application.Common.Exceptions;
+﻿using MediatR;
+using TaskFlow.Application.Common.Exceptions;
 using TaskFlow.Domain.Tasks;
 using TaskFlow.Domain.Users;
 
 namespace TaskFlow.Application.Tasks.Commands.CreateTask
 {
-    public class CreateTaskCommandHandler
+    public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskResponse>
     {
         private readonly ITaskRepository _taskRepository;
         private readonly IUserRepository _userRepository;
@@ -17,15 +18,17 @@ namespace TaskFlow.Application.Tasks.Commands.CreateTask
             _userRepository = userRepository;
         }
 
-        public async Task<TaskResponse> Handle(CreateTaskCommand command)
+        public async Task<TaskResponse> Handle(
+            CreateTaskCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetById(command.UserId);
+            var user = await _userRepository.GetById(request.userId);
+            if (user == null)
+                throw new NotFoundException($"User with id {request} not found.");
 
-            if (user is null)
-                throw new NotFoundException("User not found.");
-
-            var taskItem = new TaskItem(command.Title, command.Description, command.UserId);
-
+            var taskItem = new TaskItem(
+                request.title,
+                request.description,
+                request.userId);
             await _taskRepository.Add(taskItem);
 
             return taskItem.ToTaskResponse();

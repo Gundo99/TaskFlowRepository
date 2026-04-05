@@ -14,12 +14,12 @@ namespace TaskFlow.Application.Tasks.Commands.UpdateTask
 
         public async Task<TaskResponse> Handle(UpdateTaskCommand command)
         {
-            var taskItem = await _taskRepository.GetById(command.TaskId);
+            var taskItem = await _taskRepository.GetById(command.taskId);
 
             if (taskItem is null)
                 throw new NotFoundException("Task not found.");
 
-            taskItem.UpdateDetails(command.Title, command.Description);
+            taskItem.UpdateDetails(command.title, command.description);
 
             await _taskRepository.Update(taskItem);
 

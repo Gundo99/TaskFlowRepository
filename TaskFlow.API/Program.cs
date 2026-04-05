@@ -1,6 +1,10 @@
+using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.API.Middleware;
 using TaskFlow.Application.Common;
+using TaskFlow.Application.Common.Behaviours;
+using TaskFlow.Application.Common.Validation;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
 using TaskFlow.Application.Tasks.Commands.UpdateTask;
 using TaskFlow.Application.Tasks.EventHandler;
@@ -14,6 +18,7 @@ using TaskFlow.Application.Users.Queries.GetUsers;
 using TaskFlow.Domain.Tasks;
 using TaskFlow.Domain.Tasks.Events;
 using TaskFlow.Domain.Users;
+using TaskFlow.Domain.Users.Commands;
 using TaskFlow.Infrastructure.Persistence;
 using TaskFlow.Infrastructure.Persistence.Repositories;
 
@@ -45,6 +50,9 @@ builder.Services.AddScoped<IDomainEventHandler<TaskCompletedEvent>, TaskComplete
 builder.Services.AddScoped<IDomainEventHandler<TaskCompletedEvent>, TaskCompletedNotificationHandler>();
 builder.Services.AddScoped<IDomainEventHandler<UserRegisteredEvent>, UserRegisteredEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<UserRegisteredEvent>, UserWelcomeNotificationHandler>();
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserCommandValidator>();
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterUserCommand).Assembly));
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 var app = builder.Build();
 

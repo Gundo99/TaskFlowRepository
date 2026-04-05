@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using TaskFlow.API.Contracts;
 using TaskFlow.API.Contracts.Tasks;
 using TaskFlow.Application.Tasks.Commands;
@@ -22,10 +23,11 @@ namespace TaskFlow.API.Controllers
         private readonly UpdateTaskCommandHandler _updateTaskCommandHandler;
         private readonly DeleteTaskCommandHandler _deleteTaskHandler;
         private readonly GetTaskByIdQueryHandler _getTaskByIdHandler;
+        private readonly IMediator _mediator;
 
         public TasksController(CreateTaskCommandHandler createTaskHandler, GetTasksByUserIdQueryHandler getTasksByUserIdQuery
             , CompleteTaskCommdandHandler completeTaskCommdandHandler, UpdateTaskCommandHandler updateTaskCommandHandler,
-           DeleteTaskCommandHandler deleteTaskHandler, GetTaskByIdQueryHandler getTaskByIdQueryHandler)
+           DeleteTaskCommandHandler deleteTaskHandler, GetTaskByIdQueryHandler getTaskByIdQueryHandler, IMediator mediator)
         {
             _createTaskHandler = createTaskHandler;
             _getTasksByUserIdQueryHandler = getTasksByUserIdQuery;
@@ -33,13 +35,14 @@ namespace TaskFlow.API.Controllers
             _updateTaskCommandHandler = updateTaskCommandHandler;
             _deleteTaskHandler = deleteTaskHandler;
             _getTaskByIdHandler = getTaskByIdQueryHandler;
+            _mediator = mediator;
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Guid userId, [FromBody] CreateTaskRequest request)
         {
             var command = new CreateTaskCommand(userId, request.Title, request.Description);
-            var task = await _createTaskHandler.Handle(command);
+            var task = await _mediator.Send(command);
 
             return Ok(task);
         }
