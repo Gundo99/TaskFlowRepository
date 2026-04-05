@@ -20,7 +20,7 @@ namespace TaskFlow.Application.Users.Handlers
 
         public async Task Handle(CompleteTaskCommand command)
         {
-            var task = await _taskRepository.GetById(command.TaskId);
+            var task = await _taskRepository.GetById(command.taskId);
             if (task is null)
                 throw new NotFoundException("Task not found.");
             task.MarkAsCompleted();

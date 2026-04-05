@@ -73,15 +73,15 @@ namespace TaskFlow.API.Controllers
         }
 
         [HttpPut("{id:guid}/email")]
-        public async Task<IActionResult> UpdateEmail(Guid id, [FromBody] UpdateUserEmailRequest request)
+        public async Task<IActionResult> UpdateEmail(Guid id, [FromBody] UpdateUserEmailRequest request, CancellationToken cancellationToken)
         {
                 var command = new UpdateUserEmailCommand(id, request.Email);
-                var user = await _updateUserEmailCommandHandler.Handle(command);
+                var user = await _updateUserEmailCommandHandler.Handle(command, cancellationToken);
 
                 if (user == null)
                     return NotFound(new { message = "User not found." });
 
-                return Ok(new { user.Id, user.Name, Email = user.Email.Value });
+                return Ok(new { user.Id, user.Name, Email = user.Email });
         }
 
         [HttpDelete("{id:guid}")]
