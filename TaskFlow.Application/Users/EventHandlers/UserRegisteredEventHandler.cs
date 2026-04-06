@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TaskFlow.Application.Common;
+using TaskFlow.Application.Common.Interfaces;
 using TaskFlow.Domain.Users;
 
 namespace TaskFlow.Application.Users.EventHandlers

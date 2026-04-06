@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using TaskFlow.API.Requests;
+using Microsoft.AspNetCore.Mvc;
 using TaskFlow.API.Contracts.Users;
 using TaskFlow.Application.Users;
 using TaskFlow.Application.Users.Commands;
@@ -18,9 +21,10 @@ namespace TaskFlow.API.Controllers
         private readonly GetUserByIdQueryHandler _getUserByIdHandler;
         private readonly UpdateUserEmailCommandHandler _updateUserEmailCommandHandler;
         private readonly DeleteUserCommandHandler _deleteUserCommandHandler;
+        private readonly IMediator _mediator;
         public UsersController(RegisterUserCommandHandler registerUserCommandHandler, GetUsersQueryHandler getUsersQueryHandler,
             GetUserByIdQueryHandler getUserByIdQueryHandler, UpdateUserEmailCommandHandler updateUserEmailCommandHandler,
-            DeleteUserCommandHandler deleteUserCommandHandler)
+            DeleteUserCommandHandler deleteUserCommandHandler, IMediator mediator)
         {
             _registerUserCommandHandler = registerUserCommandHandler;
             _getUsersHandler = getUsersQueryHandler;
@@ -28,8 +32,10 @@ namespace TaskFlow.API.Controllers
             _updateUserEmailCommandHandler = updateUserEmailCommandHandler;
             _updateUserEmailCommandHandler = updateUserEmailCommandHandler;
             _deleteUserCommandHandler = deleteUserCommandHandler;
+            _mediator = mediator;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest request)
         {
@@ -42,6 +48,7 @@ namespace TaskFlow.API.Controllers
              );
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] int pageNumber =1, 
             [FromQuery] int pageSize = 10, [FromQuery] string? search = null,
@@ -61,6 +68,7 @@ namespace TaskFlow.API.Controllers
 
         }
 
+        [Authorize]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -72,6 +80,7 @@ namespace TaskFlow.API.Controllers
             return Ok(user);
         }
 
+        [Authorize]
         [HttpPut("{id:guid}/email")]
         public async Task<IActionResult> UpdateEmail(Guid id, [FromBody] UpdateUserEmailRequest request, CancellationToken cancellationToken)
         {
@@ -84,6 +93,7 @@ namespace TaskFlow.API.Controllers
                 return Ok(new { user.Id, user.Name, Email = user.Email });
         }
 
+        [Authorize]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -95,6 +105,15 @@ namespace TaskFlow.API.Controllers
                 return NotFound(new { message = "User not found." });
 
             return NoContent();
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody]LoginRequest loginRequest)
+        {
+            var token = await _mediator.Send(
+                new LoginUserCommand(loginRequest.Email));
+
+            return Ok(new { Token = token });
         }
     }
 }

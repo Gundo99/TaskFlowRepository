@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskFlow.Application", "Tas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskFlow.Infrastructure", "TaskFlow.Infrastructure\TaskFlow.Infrastructure.csproj", "{31C00385-B6F0-42FE-B8E4-88D0D1E472F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskFlow.Persistence", "TaskFlow.Persistence\TaskFlow.Persistence.csproj", "{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskFlow.API", "TaskFlow.API\TaskFlow.API.csproj", "{4B0B04E3-B676-4DB7-8A84-E79B62E7F3F0}"
 EndProject
 Global
@@ -59,18 +57,6 @@ Global
 		{31C00385-B6F0-42FE-B8E4-88D0D1E472F3}.Release|x64.Build.0 = Release|Any CPU
 		{31C00385-B6F0-42FE-B8E4-88D0D1E472F3}.Release|x86.ActiveCfg = Release|Any CPU
 		{31C00385-B6F0-42FE-B8E4-88D0D1E472F3}.Release|x86.Build.0 = Release|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Debug|x64.Build.0 = Debug|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Debug|x86.Build.0 = Debug|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Release|x64.ActiveCfg = Release|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Release|x64.Build.0 = Release|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Release|x86.ActiveCfg = Release|Any CPU
-		{D7FD6E1F-A81D-4FAC-8B82-2240FEA280CC}.Release|x86.Build.0 = Release|Any CPU
 		{4B0B04E3-B676-4DB7-8A84-E79B62E7F3F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4B0B04E3-B676-4DB7-8A84-E79B62E7F3F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B0B04E3-B676-4DB7-8A84-E79B62E7F3F0}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -86,5 +72,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D416D6C8-C602-4906-A5BF-6C360EB0DB13}
 	EndGlobalSection
 EndGlobal

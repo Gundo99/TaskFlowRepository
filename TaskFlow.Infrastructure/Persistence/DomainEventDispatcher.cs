@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using TaskFlow.Application.Common;
+using TaskFlow.Application.Common.Interfaces;
 using TaskFlow.Domain.Common;
 
 namespace TaskFlow.Infrastructure.Persistence
