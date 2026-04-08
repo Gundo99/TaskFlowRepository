@@ -8,5 +8,5 @@ using TaskFlow.Application.Tasks;
 
 namespace TaskFlow.Domain.Users.Commands
 {
-    public record RegisterUserCommand(string Name, string Email) : IRequest<TaskResponse>;
+    public record RegisterUserCommand(string Name, string Email, string Password) : IRequest<TaskResponse>;
 }

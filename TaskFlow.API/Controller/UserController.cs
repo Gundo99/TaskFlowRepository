@@ -9,6 +9,8 @@ using TaskFlow.Application.Users.Handlers;
 using TaskFlow.Application.Users.Queries.GetUserById;
 using TaskFlow.Application.Users.Queries.GetUsers;
 using TaskFlow.Domain.Users.Commands;
+using Microsoft.AspNetCore.Identity.Data;
+using LoginRequest = TaskFlow.API.Requests.LoginRequest;
 
 namespace TaskFlow.API.Controllers
 {
@@ -35,17 +37,12 @@ namespace TaskFlow.API.Controllers
             _mediator = mediator;
         }
 
-        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterUserRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
-            var command = new RegisterUserCommand(request.Name, request.Email);
-            var user = await _registerUserCommandHandler.Handle(command);
+            var result = await _registerUserCommandHandler.Handle(new RegisterUserCommand(request.Name ,request.Email, request.Password), cancellationToken);
 
-             return CreatedAtAction(nameof(Register),
-                 new { id = user.Id },
-                 new { user.Id, user.Name, Email = user.Email.Value }
-             );
+            return Ok(result);
         }
 
         [Authorize]
@@ -106,12 +103,19 @@ namespace TaskFlow.API.Controllers
 
             return NoContent();
         }
+        [HttpPut("{id}/password")]
+        public async Task<IActionResult> SetPassword(Guid id, [FromBody] SetPasswordRequest request)
+        {
+            await _mediator.Send(new SetUserPasswordCommand(id, request.Password));
+
+            return Ok();
+        }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]LoginRequest loginRequest)
         {
             var token = await _mediator.Send(
-                new LoginUserCommand(loginRequest.Email));
+                new LoginUserCommand(loginRequest.Email, loginRequest.Password));
 
             return Ok(new { Token = token });
         }

@@ -1,6 +1,6 @@
 ﻿namespace TaskFlow.API.Requests
 {
-    public class LoginRequest
+    public class RegisterRequest
     {
         public string Email { get; set; }
         public string Password { get; set; }

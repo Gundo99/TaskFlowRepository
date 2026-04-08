@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace TaskFlow.Application.Users.Commands
 {
-    public record LoginUserCommand(string Email, string Password) : IRequest<string>;
+    public record SetUserPasswordCommand(Guid UserId, string Password) : IRequest<Unit>;
 }

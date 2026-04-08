@@ -9,7 +9,8 @@ namespace TaskFlow.Application.Users
             return new UserResponse
             {
                 Id = user.Id,
-                Email = user.Email.Value
+                Email = user.Email.Value,
+                Name = user.Name
             };
         }
     }

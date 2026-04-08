@@ -13,24 +13,22 @@ namespace TaskFlow.Domain.Users
         public string? Name { get; private set; }
 
         public Email Email { get; private set; }
-
+        public string PasswordHash { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
         private User() { }
-        public User(string name, Email email)
+        public User(string name, Email email, string passwordHash)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Name cannot be empty.");
-
             if (email == null)
                 throw new ArgumentException("Email cannot be empty.");
 
             Id = Guid.NewGuid();
-            Name = name;
             Email = email;
             CreatedAt = DateTime.UtcNow;
+            Name = name;
 
             AddDomainEvent(new UserRegisteredEvent(Id));
+            PasswordHash = passwordHash;
         }
 
         public void UpdateName(string name)
@@ -46,6 +44,11 @@ namespace TaskFlow.Domain.Users
             if (email == null)
                 throw new ArgumentException("Email cannot be empty.");
             Email = email;
+        }
+
+        public void SetPassword(string passwordHash)
+        {
+            PasswordHash = passwordHash;
         }
     }
 }

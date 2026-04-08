@@ -12,9 +12,8 @@ namespace TaskFlow.Application.Common.Validation
     {
         public RegisterUserCommandValidator()
         {
-            RuleFor(x => x.Name)
-                .NotEmpty()
-                .MaximumLength(100);
+            RuleFor(x => x.Password)
+                .NotEmpty();
 
             RuleFor(x => x.Email)
                 .NotEmpty()
