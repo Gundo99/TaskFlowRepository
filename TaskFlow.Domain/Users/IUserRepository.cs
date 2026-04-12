@@ -9,6 +9,9 @@
         Task Delete(User user);
         Task<List<User>> GetAll();
 
+        Task SaveChangesAsync();
+        Task<User?> GetByRefreshTokenAsync(string refreshToken);
+
         Task<List<User>> GetPaged(int pageNumber, int pageSize, string? search, string? sortBy, string? sortDirection);
         Task<int> Count(string? search);
     }

@@ -8,5 +8,5 @@ using TaskFlow.Application.Common.Response;
 
 namespace TaskFlow.Application.Users.Commands
 {
-    public record LoginUserCommand(string Email, string Password) : IRequest<AuthResponse>;
+    public record  RefreshTokenCommand(string Token) : IRequest<AuthResponse>;
 }

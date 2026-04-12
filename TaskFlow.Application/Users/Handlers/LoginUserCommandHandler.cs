@@ -5,26 +5,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Application.Common.Interfaces;
+using TaskFlow.Application.Common.Response;
 using TaskFlow.Application.Users.Commands;
 using TaskFlow.Domain.Users;
 
 namespace TaskFlow.Application.Users.Handlers
 {
-    public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, string>
+    public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthResponse>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly ITokenService _tokenService;
         private IPasswordHasher _passwordHasher;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
 
-        public LoginUserCommandHandler(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator,
-                IPasswordHasher passwordHasher)
+        public LoginUserCommandHandler(IUserRepository userRepository, ITokenService tokenService,
+                IPasswordHasher passwordHasher, IRefreshTokenRepository refreshTokenRepository)
         {
             _userRepository = userRepository;
-            _jwtTokenGenerator = jwtTokenGenerator;
+            _tokenService = tokenService;
             _passwordHasher = passwordHasher;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
-        public async Task<string> Handle(
+        public async Task<AuthResponse> Handle(
             LoginUserCommand loginUserCommand,
             CancellationToken cancellationToken)
         {
@@ -37,7 +40,19 @@ namespace TaskFlow.Application.Users.Handlers
             if (!isValid)
                 throw new Exception("Invalid credentials.");
 
-            return _jwtTokenGenerator.GenerateToken(user.Id, user.Email.Value);
+           var accessToken = _tokenService.GenerateAccessToken(user);
+           var refreshToken = _tokenService.GenerateRefreshToken(user);
+
+            await _refreshTokenRepository.AddAsync(refreshToken);
+
+
+            await _userRepository.SaveChangesAsync();
+
+            return new AuthResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken.Token
+            };
         }
     }
 }

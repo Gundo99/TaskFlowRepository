@@ -40,14 +40,14 @@ namespace TaskFlow.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
-            var result = await _registerUserCommandHandler.Handle(new RegisterUserCommand(request.Name ,request.Email, request.Password), cancellationToken);
+            var result = await _registerUserCommandHandler.Handle(new RegisterUserCommand(request.Name, request.Email, request.Password), cancellationToken);
 
             return Ok(result);
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int pageNumber =1, 
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10, [FromQuery] string? search = null,
             [FromQuery] string? sortBy = "name", [FromQuery] string? sortDirection = "asc")
         {
@@ -81,13 +81,13 @@ namespace TaskFlow.API.Controllers
         [HttpPut("{id:guid}/email")]
         public async Task<IActionResult> UpdateEmail(Guid id, [FromBody] UpdateUserEmailRequest request, CancellationToken cancellationToken)
         {
-                var command = new UpdateUserEmailCommand(id, request.Email);
-                var user = await _updateUserEmailCommandHandler.Handle(command, cancellationToken);
+            var command = new UpdateUserEmailCommand(id, request.Email);
+            var user = await _updateUserEmailCommandHandler.Handle(command, cancellationToken);
 
-                if (user == null)
-                    return NotFound(new { message = "User not found." });
+            if (user == null)
+                return NotFound(new { message = "User not found." });
 
-                return Ok(new { user.Id, user.Name, Email = user.Email });
+            return Ok(new { user.Id, user.Name, Email = user.Email });
         }
 
         [Authorize]
@@ -112,12 +112,27 @@ namespace TaskFlow.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]LoginRequest loginRequest)
+        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
             var token = await _mediator.Send(
                 new LoginUserCommand(loginRequest.Email, loginRequest.Password));
 
             return Ok(new { Token = token });
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+        {
+            var authResponse = await _mediator.Send(
+                new RefreshTokenCommand(request.RefreshToken));
+            return Ok(authResponse);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("admin-only")]
+        public IActionResult AdminOnlyEndpoint()
+        {
+            return Ok("You are admin");
         }
     }
 }

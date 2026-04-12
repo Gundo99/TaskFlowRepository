@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Domain.Common;
+using TaskFlow.Domain.Entities;
 
 namespace TaskFlow.Domain.Users
 {
@@ -11,13 +12,15 @@ namespace TaskFlow.Domain.Users
     {
 
         public string? Name { get; private set; }
-
+        public Role Role { get; private set; } = Role.User;
         public Email Email { get; private set; }
         public string PasswordHash { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
+        public List<RefreshToken> RefreshTokens { get; private set; } = new List<RefreshToken>();
+
         private User() { }
-        public User(string name, Email email, string passwordHash)
+        public User(string name, Email email, string passwordHash, Role role = Role.User)
         {
             if (email == null)
                 throw new ArgumentException("Email cannot be empty.");
@@ -26,9 +29,10 @@ namespace TaskFlow.Domain.Users
             Email = email;
             CreatedAt = DateTime.UtcNow;
             Name = name;
+            PasswordHash = passwordHash;
+            Role = role;
 
             AddDomainEvent(new UserRegisteredEvent(Id));
-            PasswordHash = passwordHash;
         }
 
         public void UpdateName(string name)

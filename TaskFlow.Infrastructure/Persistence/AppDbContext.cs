@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.Tasks.EventHandler;
 using TaskFlow.Domain.Common;
+using TaskFlow.Domain.Entities;
 using TaskFlow.Domain.Tasks;
 using TaskFlow.Domain.Users;
 
@@ -12,6 +13,7 @@ namespace TaskFlow.Infrastructure.Persistence
 
         public DbSet<User> Users => Set<User>();
         public DbSet<TaskItem> Tasks => Set<TaskItem>();
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
         public AppDbContext(DbContextOptions<AppDbContext> options, DomainEventDispatcher? domainEventDispatcher = null)
             : base(options)
@@ -49,6 +51,20 @@ namespace TaskFlow.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Token)
+                    .IsRequired();
+                entity.HasOne<User>()
+                    .WithMany(u => u.RefreshTokens)
+                    .HasForeignKey(rt => rt.UserId);
+            });
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasConversion<int>();
+
             modelBuilder.Entity<User>(builder =>
             {
                 builder.HasKey(x => x.Id);

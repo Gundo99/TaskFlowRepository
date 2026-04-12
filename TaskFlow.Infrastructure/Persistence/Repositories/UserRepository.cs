@@ -26,6 +26,7 @@ namespace TaskFlow.Infrastructure.Persistence.Repositories
         public async Task<User?> GetByEmail(string email)
         {
             return await _dbContext.Users
+                .Include(u => u.RefreshTokens)
                 .FirstOrDefaultAsync(x => x.Email.Value == email);
         }
         public async Task<List<User>> GetAll()
@@ -84,10 +85,24 @@ namespace TaskFlow.Infrastructure.Persistence.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task SaveChangesAsync()
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task Delete(User user)
         {
             _dbContext.Users.Remove(user);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<User?> GetByRefreshTokenAsync(string refreshToken)
+        {
+            return await _dbContext.Users
+                .Include(u => u.RefreshTokens)
+                .FirstOrDefaultAsync(u =>
+                    u.RefreshTokens.Any(rt => rt.Token == refreshToken)
+                );
         }
     }
 }
