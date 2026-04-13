@@ -12,6 +12,7 @@ using TaskFlow.Domain.Users.Commands;
 using Microsoft.AspNetCore.Identity.Data;
 using LoginRequest = TaskFlow.API.Requests.LoginRequest;
 using TaskFlow.Application.Common.Response;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace TaskFlow.API.Controllers
 {
@@ -39,6 +40,7 @@ namespace TaskFlow.API.Controllers
         }
 
         [HttpPost]
+        [EnableRateLimiting("fixed")]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest request)
         {
             var result = await _mediator.Send(
@@ -49,6 +51,7 @@ namespace TaskFlow.API.Controllers
 
         [Authorize]
         [HttpGet]
+        [EnableRateLimiting("fixed")]
         public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10, [FromQuery] string? search = null,
             [FromQuery] string? sortBy = "name", [FromQuery] string? sortDirection = "asc")
@@ -69,6 +72,7 @@ namespace TaskFlow.API.Controllers
 
         [Authorize]
         [HttpGet("{id:guid}")]
+        [EnableRateLimiting("fixed")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var user = await _mediator.Send(new GetUserByIdQuery(id));
@@ -81,6 +85,7 @@ namespace TaskFlow.API.Controllers
 
         [Authorize]
         [HttpPut("{id:guid}/email")]
+        [EnableRateLimiting("fixed")]
         public async Task<IActionResult> UpdateEmail(Guid id, [FromBody] UpdateUserEmailRequest request, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send( new UpdateUserEmailCommand(id, request.Email));
@@ -90,12 +95,14 @@ namespace TaskFlow.API.Controllers
 
         [Authorize]
         [HttpDelete("{id:guid}")]
+        [EnableRateLimiting("fixed")]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _mediator.Send(new DeleteUserCommand(id));
             return Ok(ApiResponse<string>.SuccessResponse("Deleted successfully"));
         }
         [HttpPut("{id}/password")]
+        [EnableRateLimiting("fixed")]
         public async Task<IActionResult> SetPassword(Guid id, [FromBody] SetPasswordRequest request)
         {
             await _mediator.Send(new SetUserPasswordCommand(id, request.Password));
@@ -104,6 +111,7 @@ namespace TaskFlow.API.Controllers
         }
 
         [HttpPost("login")]
+        [EnableRateLimiting("fixed")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
             var result = await _mediator.Send(
@@ -113,6 +121,7 @@ namespace TaskFlow.API.Controllers
         }
 
         [HttpPost("refresh")]
+        [EnableRateLimiting("fixed")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
             var result = await _mediator.Send(
@@ -123,6 +132,7 @@ namespace TaskFlow.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("admin-only")]
+        [EnableRateLimiting("fixed")]
         public IActionResult AdminOnlyEndpoint()
         {
             return Ok(ApiResponse<string>.SuccessResponse("You are an admin"));

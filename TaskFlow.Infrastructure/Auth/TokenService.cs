@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,12 @@ namespace TaskFlow.Infrastructure.Auth
     public class TokenService : ITokenService
     {
         private readonly IConfiguration _configuration;
+        private readonly JwtSettings _jwtSettings;
 
-        public TokenService(IConfiguration configuration)
+        public TokenService(IConfiguration configuration,  IOptions<JwtSettings> jwtOptions)
         {
             _configuration = configuration;
+            _jwtSettings = jwtOptions.Value;
         }
 
         public string GenerateAccessToken(User user)
