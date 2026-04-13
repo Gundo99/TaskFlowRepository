@@ -1,5 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Text.Json;
 using TaskFlow.Application.Common.Exceptions;
+using TaskFlow.Application.Common.Response;
 
 namespace TaskFlow.API.Middleware
 {
@@ -44,6 +47,41 @@ namespace TaskFlow.API.Middleware
             var response = new ErrorResponse
             {
                 Message = message
+            };
+
+            var json = JsonSerializer.Serialize(response);
+            await context.Response.WriteAsync(json);
+        }
+        private static async Task HandleException(HttpContext context, Exception ex)
+        {
+            context.Response.ContentType = "application/json";
+
+            var response = ex switch
+            {
+                ValidationException valEx => new ApiResponse<object>
+                {
+                    Success = false,
+                    Error = string.Join(", ", valEx.Message.Select(e => e.ToString()))
+                },
+
+                UnauthorizedAccessException => new ApiResponse<object>
+                {
+                    Success = false,
+                    Error = "Unauthorized"
+                },
+
+                _ => new ApiResponse<object>
+                {
+                    Success = false,
+                    Error = "Internal server error"
+                }
+            };
+
+            context.Response.StatusCode = ex switch
+            {
+                ValidationException => (int)HttpStatusCode.BadRequest,
+                UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
+                _ => (int)HttpStatusCode.InternalServerError
             };
 
             var json = JsonSerializer.Serialize(response);

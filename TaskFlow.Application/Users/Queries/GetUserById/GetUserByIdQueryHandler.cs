@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskFlow.Application.Users.Queries.GetUsers;
 using TaskFlow.Domain.Users;
 
 namespace TaskFlow.Application.Users.Queries.GetUserById
@@ -16,17 +17,20 @@ namespace TaskFlow.Application.Users.Queries.GetUserById
             _userRepository = userRepository;
         } 
 
-        public async Task<GetUserByIdResponse?> Handle(Guid id)
+        public async Task<UserResponse> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetById(id);
+            var user = await _userRepository.GetById(request.UserId);
 
             if (user == null)
-                return null;
+                throw new Exception("User not found");
 
-            return new GetUserByIdResponse(
+            return new UserResponse
+            (
                 user.Id,
-                user.Name,
-                user.Email.Value);
+                user.Email.Value,
+                user.Name
+            );
+
         }
     }
 }

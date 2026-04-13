@@ -11,6 +11,7 @@ using TaskFlow.Application.Users.Queries.GetUsers;
 using TaskFlow.Domain.Users.Commands;
 using Microsoft.AspNetCore.Identity.Data;
 using LoginRequest = TaskFlow.API.Requests.LoginRequest;
+using TaskFlow.Application.Common.Response;
 
 namespace TaskFlow.API.Controllers
 {
@@ -38,11 +39,12 @@ namespace TaskFlow.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Register([FromBody] RegisterUserRequest request)
         {
-            var result = await _registerUserCommandHandler.Handle(new RegisterUserCommand(request.Name, request.Email, request.Password), cancellationToken);
+            var result = await _mediator.Send(
+                new RegisterUserCommand(request.Name, request.Email, request.Password));
 
-            return Ok(result);
+            return Ok(ApiResponse<UserResponse>.SuccessResponse(result));
         }
 
         [Authorize]
@@ -60,7 +62,7 @@ namespace TaskFlow.API.Controllers
                 SortDirection = sortDirection
             };
 
-            var result = await _getUsersHandler.Handle(query);
+            var result = await _mediator.Send(query);
             return Ok(result);
 
         }
@@ -69,7 +71,7 @@ namespace TaskFlow.API.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var user = await _getUserByIdHandler.Handle(id);
+            var user = await _mediator.Send(new GetUserByIdQuery(id));
 
             if (user == null)
                 return NotFound(new { message = "User not found." });
@@ -81,58 +83,49 @@ namespace TaskFlow.API.Controllers
         [HttpPut("{id:guid}/email")]
         public async Task<IActionResult> UpdateEmail(Guid id, [FromBody] UpdateUserEmailRequest request, CancellationToken cancellationToken)
         {
-            var command = new UpdateUserEmailCommand(id, request.Email);
-            var user = await _updateUserEmailCommandHandler.Handle(command, cancellationToken);
+            var result = await _mediator.Send( new UpdateUserEmailCommand(id, request.Email));
 
-            if (user == null)
-                return NotFound(new { message = "User not found." });
-
-            return Ok(new { user.Id, user.Name, Email = user.Email });
+            return Ok(ApiResponse<UserResponse>.SuccessResponse(result));
         }
 
         [Authorize]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var command = new DeleteUserCommand(id);
-
-            var success = await _deleteUserCommandHandler.Handle(command);
-
-            if (!success)
-                return NotFound(new { message = "User not found." });
-
-            return NoContent();
+            await _mediator.Send(new DeleteUserCommand(id));
+            return Ok(ApiResponse<string>.SuccessResponse("Deleted successfully"));
         }
         [HttpPut("{id}/password")]
         public async Task<IActionResult> SetPassword(Guid id, [FromBody] SetPasswordRequest request)
         {
             await _mediator.Send(new SetUserPasswordCommand(id, request.Password));
 
-            return Ok();
+            return Ok(ApiResponse<string>.SuccessResponse("Password set successfully"));
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
-            var token = await _mediator.Send(
+            var result = await _mediator.Send(
                 new LoginUserCommand(loginRequest.Email, loginRequest.Password));
 
-            return Ok(new { Token = token });
+            return Ok(ApiResponse<AuthResponse>.SuccessResponse(result));
         }
 
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
-            var authResponse = await _mediator.Send(
+            var result = await _mediator.Send(
                 new RefreshTokenCommand(request.RefreshToken));
-            return Ok(authResponse);
+
+            return Ok(ApiResponse<AuthResponse>.SuccessResponse(result));
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet("admin-only")]
         public IActionResult AdminOnlyEndpoint()
         {
-            return Ok("You are admin");
+            return Ok(ApiResponse<string>.SuccessResponse("You are an admin"));
         }
     }
 }

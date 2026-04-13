@@ -1,4 +1,5 @@
-﻿using TaskFlow.Domain.Users;
+﻿using TaskFlow.Application.Users.Queries.GetUsers;
+using TaskFlow.Domain.Users;
 
 namespace TaskFlow.Application.Users
 {
@@ -7,11 +8,11 @@ namespace TaskFlow.Application.Users
         public static UserResponse ToUserResponse(this User user)
         {
             return new UserResponse
-            {
-                Id = user.Id,
-                Email = user.Email.Value,
-                Name = user.Name
-            };
+            (
+                user.Id,
+                user.Email.Value,
+                user.Name
+            );
         }
     }
 }

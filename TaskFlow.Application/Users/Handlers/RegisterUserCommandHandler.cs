@@ -1,4 +1,5 @@
 ﻿using TaskFlow.Application.Common.Interfaces;
+using TaskFlow.Application.Users.Queries.GetUsers;
 using TaskFlow.Domain.Users;
 using TaskFlow.Domain.Users.Commands;
 
