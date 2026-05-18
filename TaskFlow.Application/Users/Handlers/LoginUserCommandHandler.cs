@@ -35,6 +35,11 @@ namespace TaskFlow.Application.Users.Handlers
             if (user == null) 
                 throw new Exception("Invalid credentials.");
 
+            if (string.IsNullOrEmpty(user.PasswordHash))
+                throw new Exception("User has no password set.");
+
+            Console.WriteLine(user.PasswordHash);
+
             var isValid = _passwordHasher.Verify(loginUserCommand.Password, user.PasswordHash);
 
             if (!isValid)

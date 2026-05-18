@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: TaskFlow.API/Dockerfile
+    ports:
+      - "5000:8080"
+    depends_on:
+      - postgres
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=taskflow;Username=postgres;Password=postgres
+      - Jwt__Key=TaskFlowSuperSecretKey_2026_VeryStrong_Key_12345
+      - Jwt__Issuer=TaskFlowAPI
+      - Jwt__Audience=TaskFlowAPI
+
+  postgres:
+    image: postgres:15
+    container_name: taskflow_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: taskflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

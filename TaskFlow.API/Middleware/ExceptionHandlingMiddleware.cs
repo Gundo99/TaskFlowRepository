@@ -33,9 +33,9 @@ namespace TaskFlow.API.Middleware
             {
                 await WriteErrorResponse(context, StatusCodes.Status400BadRequest, ex.Message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await WriteErrorResponse(context, StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+                await WriteErrorResponse(context, StatusCodes.Status500InternalServerError, ex.ToString() );
             }
         }
 

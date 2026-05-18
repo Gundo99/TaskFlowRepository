@@ -138,6 +138,26 @@ Log.Logger = new LoggerConfiguration()
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    var retries = 5;
+    while (retries > 0)
+    {
+        try
+        {
+            db.Database.Migrate();
+            break;
+        }
+        catch
+        {
+            retries--;
+            Thread.Sleep(5000);
+        }
+    }
+}
+
 app.MapHealthChecks("/health");
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRateLimiter();
